@@ -3,20 +3,13 @@ const app = express()
 const mongoose = require("mongoose")
 const {MONGOURI} = require("./keys.js")
 
-var bodyParser = require('body-parser')
-
-
-// // parse application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false }))
- 
-// // parse application/json
-// app.use(bodyParser.json())
+const PORT = 3000;
 
 app.use(express.json())
 
-const User = require('./models/user')
+app.use(require("./routes/auth"))
 
-const PORT = 3000;
+
 
 mongoose.connect(MONGOURI,{
     useNewUrlParser: true,
@@ -33,10 +26,8 @@ mongoose.connection.on('error',(err) => {
     console.log("mongoose çalışmıyor",err)
 })
 
-app.post('/',(req,res) => {
-    
-    console.log(req.body.name)
-})
+
+
 
 
 
