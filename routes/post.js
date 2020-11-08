@@ -45,4 +45,15 @@ router.get('/allpost',(req,res) => {
     })
 })
 
+router.get('/mypost',requireLogin,(req,res)=> {
+    Post.find({postedBy:req.user.id})
+    .populate("postedBy","_id name email")
+    .then(mypost => {
+        res.json({mypost})
+    }).catch(err => {
+        console.log(err)
+    })
+})
+
+
 module.exports = router
