@@ -10,7 +10,7 @@ router.get('/',(req,res) => {
     req.send("Home")
 })
 
-router.post('/signin',(req,res) => {
+router.post('/signup',(req,res) => {
     const {name,email,password} = req.body
 
     if(!name || !email || !password) {
@@ -33,13 +33,14 @@ router.post('/signin',(req,res) => {
     
             user.save().then(
                 user => {
+                    console.log("deneme")
                     res.json({message:"succesfully"})
                 }
             ).catch(err=> {
-                return res.status(422).json({error:err})
+                console.log(err)
             })
         }).catch(err => {
-            return res.status(422).json({error:err})
+            console.log(err)
         })
     
     })
@@ -47,5 +48,36 @@ router.post('/signin',(req,res) => {
     
      
 })
+
+
+
+
+router.post('/signin',(req,res) => {
+    const {name,email,password} = req.body
+
+    if(!name || !email || !password) {
+        return res.status(404).json({error:"tüm alanları doldurun"})
+    }
+
+    User.findOne({email:email})
+    .then(savedUser => {
+        if(!savedUser){
+            return res.status(404).json({error:"email ya da şifre hatalı"})
+        }
+        
+        bcrypt.compare(password,savedUser.password)
+        .then(doMatch => {
+            if(doMatch) {
+                return res.json({message:"başarılı"})
+            }
+            return res.status(404).json({error:"email ya da şifre hatalı"})
+        }).catch(err => {
+            console.log(err)
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+})
+
 
 module.exports = router
