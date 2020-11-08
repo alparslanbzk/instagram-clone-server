@@ -3,7 +3,8 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const User = mongoose.model("User")
 const bcrypt = require("bcryptjs")
-
+const jwt = require("jsonwebtoken")
+const {JWT_SECRET} = require("../keys")
 
 router.get('/',(req,res) => {
     console.log("Home")
@@ -14,7 +15,7 @@ router.post('/signup',(req,res) => {
     const {name,email,password} = req.body
 
     if(!name || !email || !password) {
-         return res.status(422).json({error:"please fill all fields"})
+         return res.status(404).json({error:"please fill all fields"})
     }
 
     bcrypt.hash(password,12)
@@ -22,7 +23,7 @@ router.post('/signup',(req,res) => {
         User.findOne({email:email})
         .then(savedUser => {
             if(savedUser){
-                return res.status(422).json({error:"user already existing with that email"})           
+                return res.status(404).json({error:"user already existing with that email"})           
             }
     
             const user = new User({
@@ -56,21 +57,22 @@ router.post('/signin',(req,res) => {
     const {name,email,password} = req.body
 
     if(!name || !email || !password) {
-        return res.status(404).json({error:"tüm alanları doldurun"})
+        return res.status(400).json({error:"tüm alanları doldurun"})
     }
 
     User.findOne({email:email})
     .then(savedUser => {
         if(!savedUser){
-            return res.status(404).json({error:"email ya da şifre hatalı"})
+            return res.status(400).json({error:"email ya da şifre hatalı"})
         }
         
         bcrypt.compare(password,savedUser.password)
         .then(doMatch => {
             if(doMatch) {
-                return res.json({message:"başarılı"})
+                const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
+                res.json({token:token})
             }
-            return res.status(404).json({error:"email ya da şifre hatalı"})
+            return res.status(400).json({error:"email ya da şifre hatalı"})
         }).catch(err => {
             console.log(err)
         })
