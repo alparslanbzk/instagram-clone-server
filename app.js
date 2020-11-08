@@ -3,6 +3,8 @@ const app = express()
 const mongoose = require("mongoose")
 const {MONGOURI} = require("./keys.js")
 
+require("./models/user")
+
 const PORT = 3000;
 
 app.use(express.json())
