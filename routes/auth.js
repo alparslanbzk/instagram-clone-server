@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const User = mongoose.model("User")
+const bcrypt = require("bcryptjs")
 
 
 router.get('/',(req,res) => {
@@ -16,29 +17,34 @@ router.post('/signin',(req,res) => {
          return res.status(422).json({error:"please fill all fields"})
     }
 
-    User.findOne({email:email})
-    .then(savedUser => {
-        if(savedUser){
-            return res.status(422).json({error:"user already existing with that email"})           
-        }
-
-        const user = new User({
-            name,
-            email,
-            password
-        })
-
-        user.save().then(
-            user => {
-                res.json({message:"succesfully"})
+    bcrypt.hash(password,12)
+    .then(hashedpassword => {
+        User.findOne({email:email})
+        .then(savedUser => {
+            if(savedUser){
+                return res.status(422).json({error:"user already existing with that email"})           
             }
-        ).catch(err=> {
+    
+            const user = new User({
+                name,
+                email,
+                password:hashedpassword
+            })
+    
+            user.save().then(
+                user => {
+                    res.json({message:"succesfully"})
+                }
+            ).catch(err=> {
+                return res.status(422).json({error:err})
+            })
+        }).catch(err => {
             return res.status(422).json({error:err})
         })
-    }).catch(err => {
-        return res.status(422).json({error:err})
+    
     })
 
+    
      
 })
 
