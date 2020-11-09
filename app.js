@@ -5,7 +5,7 @@ const {MONGOURI} = require("./keys.js")
 
 
 
-const PORT = 3000;
+const PORT = 5000;
 
 
 mongoose.connect(MONGOURI,{
@@ -30,7 +30,6 @@ require("./models/post")
 
 app.use(require("./routes/auth"))
 app.use(require("./routes/post"))
-
 
 
 
