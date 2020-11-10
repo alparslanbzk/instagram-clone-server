@@ -30,6 +30,7 @@ require("./models/post")
 
 app.use(require("./routes/auth"))
 app.use(require("./routes/post"))
+app.use(require("./routes/user"))
 
 
 
