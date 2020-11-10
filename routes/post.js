@@ -56,13 +56,15 @@ router.get('/mypost',requireLogin,(req,res)=> {
 })
 
 router.put('/like',requireLogin,(req,res) => {
-    Post.findByIdAndUpdate(req.body.post._id,{
-        $push:{like:req.user._id}
+    console.log(req.user._id)
+    Post.findByIdAndUpdate(req.body.postId,{
+        $push:{likes:req.user._id}
     }, {new:true}
     ).exec((err,result) => {
         if(err){
             return res.status(422).json({error:err})
         }else{
+            console.log("succesfully",result)
             res.json(result)
         }
     
@@ -70,7 +72,7 @@ router.put('/like',requireLogin,(req,res) => {
 })
 
 router.put("/unlike",requireLogin,(req,res) => {
-    Post.findByIdAndUpdate(req.body.post._id,{
+    Post.findByIdAndUpdate(req.body.postId,{
         $pull:{likes:req.user._id}
     },{
         new:true
