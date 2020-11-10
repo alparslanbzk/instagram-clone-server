@@ -58,7 +58,7 @@ router.post('/signup',(req,res) => {
 router.post('/signin',(req,res) => {
     const {name,email,password} = req.body
 
-    if(!name || !email || !password) {
+    if(!email || !password) {
         return res.status(400).json({error:"tüm alanları doldurun"})
     }
 
@@ -72,7 +72,8 @@ router.post('/signin',(req,res) => {
         .then(doMatch => {
             if(doMatch) {
                 const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
-                res.json({token:token})
+                const {_id,name,email,followers,following,pic} = savedUser
+                res.json({token:token,user:{_id,name,email,followers,following,pic}})
             }
             return res.status(400).json({error:"email ya da şifre hatalı"})
         }).catch(err => {
