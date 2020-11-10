@@ -37,7 +37,9 @@ router.put('/follow',requireLogin,(req,res)=>{
       User.findByIdAndUpdate(req.user._id,{
           $push:{following:req.body.followId}
           
-      },{new:true}).select("-password").then(result=>{
+      },{new:true})
+      .select("-password").then(result=>{
+          console.log(result)
           res.json(result)
       }).catch(err=>{
           return res.status(422).json({error:err})
